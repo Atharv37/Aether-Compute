@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: aether-api-gateway
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env
+    networks:
+      - aether-net
+    depends_on:
+      - message-broker
+      - database
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  message-broker:
+    image: redis:alpine
+    container_name: aether-message-broker
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - aether-net
+
+  database:
+    image: postgres:alpine
+    container_name: aether-database
+    environment:
+      - POSTGRES_USER=${DB_USER:-aether}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
+      - POSTGRES_DB=${DB_NAME:-aether_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - ./shared/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - aether-net
+
+  ml-worker:
+    build: ./worker
+    container_name: aether-ml-worker
+    env_file:
+      - .env
+    networks:
+      - aether-net
+    depends_on:
+      - message-broker
+      - database
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+
+networks:
+  aether-net:
+    driver: bridge

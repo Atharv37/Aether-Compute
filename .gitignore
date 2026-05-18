@@ -1,0 +1,32 @@
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# YOLOv8 / ML
+runs/
+models/
+*.pt
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
