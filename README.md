@@ -1,13 +1,17 @@
 # AetherCompute: Industrial AI Inspection Platform
 
-### What does this project do?
+<p align="center">
+  <img src="assets/dashboard-demo.gif" alt="AetherCompute Dashboard Demo" width="800"/>
+</p>
+
+### Overview
 AetherCompute is a distributed, production-grade AI inspection platform that processes high-throughput manufacturing imagery in real-time to automatically detect component defects.
 
-### Why did you build it?
+### Motivation
 In industrial settings, manufacturing lines move quickly, and defect detection needs to be immediate and reliable. I built AetherCompute to solve the problem of fragile, resource-heavy AI pipelines. Many prototype ML systems crash due to memory leaks, disk bloat, or database disconnects during continuous uptimes. This project demonstrates how to move an AI model out of a prototype environment and into a hardened, "fail-safe" architecture that can survive in a 24/7 manufacturing facility.
 
-### How does it work?
-The system is decoupled into three primary components, utilizing an asynchronous, queue-based architecture:
+### Architecture
+The system is decoupled into three primary components, using an asynchronous, queue-based architecture:
 
 ```mermaid
 graph TD
@@ -35,7 +39,7 @@ graph TD
 - **PostgreSQL Connection Guards:** Transparent reconnection logic (`ensure_connection()`) to survive database drops without terminating the worker.
 - **Self-Reporting Worker Pulse:** The worker writes a TTL-based heartbeat (60s) to Redis containing its PID and latency. The API consumes this heartbeat, allowing the dashboard to natively monitor ML liveness without requiring SSH access.
 
-### How do I run it?
+### Getting Started
 
 **Prerequisites:** Docker & Docker Compose, Node.js v18+, Python 3.10+ (if running standalone)
 
@@ -83,8 +87,11 @@ graph TD
    ```
    Access the dashboard at `http://localhost:3000`.
 
-### What would you improve if you had more time?
+### Roadmap
 - **Authentication & Security:** Implement JWT-based authentication on the API Gateway to secure the `POST /task` endpoint from unauthorized submissions.
 - **Job Retry Mechanism:** Add a Dead Letter Queue (DLQ) and a "Retry" button on the dashboard for jobs that fail due to transient network issues (e.g., 404 image links).
 - **Horizontal Scaling:** Transition the ML Worker to Kubernetes (KEDA) for event-driven horizontal scaling based on Redis queue depth.
 - **Automated Testing:** Implement a robust suite of unit tests for the worker and API, as well as end-to-end integration tests mimicking factory floor cameras.
+
+### About
+> This is a personal portfolio project built to demonstrate production-grade AI system design.
